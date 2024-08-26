@@ -16,6 +16,7 @@
 import unittest
 from selenium import webdriver
 
+
 class NewVisitorTest(unittest.TestCase):
     def setUp(self) -> None:
         self.browser = webdriver.Firefox()
@@ -29,7 +30,7 @@ class NewVisitorTest(unittest.TestCase):
         # She checks its homepage
         self.browser.get("http://localhost:8000")
 
-        # She notices the pagge title and header mention to do lists
+        # She notices the page title and header mention to do lists
         self.assertIn("To-Do", self.browser.title)
 
         # She is invited to enter a to-do item straight away
@@ -55,3 +56,19 @@ if __name__ == "__main__":
     unittest.main()     # searches for all tests in main files then runs them
 
 # git commit -a to automatically add any changes to tracked files(not any newly added file)
+
+# User Story
+# A description of how the application will work from the point of view of the user.
+# Used to structure a functional test.
+
+# Expected failure
+# When a test fails in the way that we expected it to.
+
+# python manage.py startapp lists
+# to start building the app
+
+# Functional tests test the application from the outside, from the user’s point of view(per test per feature)
+# Unit tests test the application from the inside, from the programmer’s point of view(multiple tests per feature)
+
+
+
