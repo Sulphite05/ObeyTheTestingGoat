@@ -7,7 +7,7 @@
 # and one of the things it can do is run a development server.
 # python manage.py runserver
 # test passed after this
-
+import time
 # Tests that use Selenium let us drive a real web browser, so they really
 # let us see how the application functions from the user’s point of view.
 # That’s why they’re called functional tests.
@@ -15,6 +15,8 @@
 
 import unittest
 from selenium import webdriver
+from selenium.webdriver import Keys
+from selenium.webdriver.common.by import By
 
 
 class NewVisitorTest(unittest.TestCase):
@@ -32,20 +34,31 @@ class NewVisitorTest(unittest.TestCase):
 
         # She notices the page title and header mention to do lists
         self.assertIn("To-Do", self.browser.title)
+        header_text = self.browser.find_element(By.TAG_NAME, "h1").text
+        self.assertIn("To Do", header_text)
 
         # She is invited to enter a to-do item straight away
-        self.fail("Finish the test!")
-        [...]
+        inputbox = self.browser.find_element(By.ID, "id_new_item")
+        self.assertEqual(inputbox.get_attribute("placeholder"), "Enter a to-do item")
+
         # She types "Knead Dough" in  a text-box
+        inputbox.send_keys("Knead Dough")   # selenium's way of typing into input elements
 
         # When she hits enter, the page updates and shows "1. Knead Dough" on the page
+        inputbox.send_keys(Keys.ENTER)
+        time.sleep(1)
+
+        table = self.browser.find_element(By.ID, "id_list_table")
+        rows = table.find_elements(By.TAG_NAME, "tr")
+        self.assertTrue(any(row.text == "1. Knead Dough" for row in rows)) # generator not list comprehension
 
         # There is still a text-box inviting her to add a new item to the list
+        self.fail("Finish the test!")
 
         # She enters "Roll the rotis" as she is very methodical and presses enter
 
         # The page updates again and shows both items on the page
-
+        [...]
         # Satisfied, she goes back to sleep
 
 
