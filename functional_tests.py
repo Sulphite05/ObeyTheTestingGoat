@@ -26,6 +26,11 @@ class NewVisitorTest(unittest.TestCase):
     def tearDown(self) -> None:
         self.browser.quit()
 
+    def check_for_row_in_todo_list(self, row_text):
+        table = self.browser.find_element(By.ID, "id_list_table")
+        rows = table.find_elements(By.TAG_NAME, "tr")
+        self.assertIn(row_text, [row.text for row in rows])
+
     def test_can_start_a_todo_list(self):
 
         # Aqiba has heard about a new To Do list App
@@ -48,13 +53,12 @@ class NewVisitorTest(unittest.TestCase):
         inputbox.send_keys(Keys.ENTER)
         time.sleep(1)
 
-        table = self.browser.find_element(By.ID, "id_list_table")
-        rows = table.find_elements(By.TAG_NAME, "tr")
         # self.assertTrue(any(row.text == "1. Knead Dough" for row in rows),
         #                 "New To-Do item did not appear in the table. "
         #                 f"Contents were \n{table.text}") # generator not list comprehension
 
-        self.assertIn("1. Knead Dough", [row.text for row in rows])
+        self.check_for_row_in_todo_list("1. Knead Dough")
+
 
         # There is still a text-box inviting her to add a new item to the list
         inputbox = self.browser.find_element(By.ID, "id_new_item")
@@ -66,10 +70,7 @@ class NewVisitorTest(unittest.TestCase):
         time.sleep(1)
 
         # The page updates again and shows both items on the page
-        table = self.browser.find_element(By.ID, "id_list_table")
-        rows = table.find_elements(By.TAG_NAME, "tr")
-        self.assertIn("2. Roll the rotis", [row.text for row in rows])
-
+        self.check_for_row_in_todo_list("2. Roll the rotis")
         # Satisfied, she goes back to sleep
 
 
