@@ -50,16 +50,26 @@ class NewVisitorTest(unittest.TestCase):
 
         table = self.browser.find_element(By.ID, "id_list_table")
         rows = table.find_elements(By.TAG_NAME, "tr")
-        self.assertTrue(any(row.text == "1. Knead Dough" for row in rows),
-                        "New To-Do item did not appear in the table") # generator not list comprehension
+        # self.assertTrue(any(row.text == "1. Knead Dough" for row in rows),
+        #                 "New To-Do item did not appear in the table. "
+        #                 f"Contents were \n{table.text}") # generator not list comprehension
+
+        self.assertIn("1. Knead Dough", [row.text for row in rows])
 
         # There is still a text-box inviting her to add a new item to the list
-        self.fail("Finish the test!")
+        inputbox = self.browser.find_element(By.ID, "id_new_item")
+        self.assertEqual(inputbox.get_attribute("placeholder"), "Enter a to-do item")
 
         # She enters "Roll the rotis" as she is very methodical and presses enter
+        inputbox.send_keys("Roll the rotis")  # selenium's way of typing into input elements
+        inputbox.send_keys(Keys.ENTER)
+        time.sleep(1)
 
         # The page updates again and shows both items on the page
-        [...]
+        table = self.browser.find_element(By.ID, "id_list_table")
+        rows = table.find_elements(By.TAG_NAME, "tr")
+        self.assertIn("2. Roll the rotis", [row.text for row in rows])
+
         # Satisfied, she goes back to sleep
 
 

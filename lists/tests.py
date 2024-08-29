@@ -21,19 +21,22 @@ class HomePageTest(TestCase):
         response = self.client.get("/")
         self.assertTemplateUsed(response, "home.html")
 
-# Django is structured along a classic Model-View-Controller (MVC) pattern.
-# Well, broadly. It definitely does have models, but what Django calls views are really controllers,
-# and the view part is actually provided by the templates.
+        # Django is structured along a classic Model-View-Controller (MVC) pattern.
+        # Well, broadly. It definitely does have models, but what Django calls views are really controllers,
+        # and the view part is actually provided by the templates.
 
-# Django’s main job is to decide what to do when a user asks for a particular URL on our site.
-# Django’s workflow goes something like this:
-#
-# 1. An HTTP request comes in for a particular URL.
-#
-# 2. Django uses some rules to decide which view function should deal with the request
-# (this is referred to as resolving the URL).
-#
-# 3. The view function processes the request and returns an HTTP response.
+        # Django’s main job is to decide what to do when a user asks for a particular URL on our site.
+        # Django’s workflow goes something like this:
+        #
+        # 1. An HTTP request comes in for a particular URL.
+        #
+        # 2. Django uses some rules to decide which view function should deal with the request
+        # (this is referred to as resolving the URL).
+        #
+        # 3. The view function processes the request and returns an HTTP response.
+    def test_can_save_post_request(self):
+        response = self.client.post("/", data={"item_text": "A new list item"})
+        self.assertContains(response, "A new list item")
 
 
 
