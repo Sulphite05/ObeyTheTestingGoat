@@ -59,7 +59,6 @@ class NewVisitorTest(unittest.TestCase):
 
         self.check_for_row_in_todo_list("1. Knead Dough")
 
-
         # There is still a text-box inviting her to add a new item to the list
         inputbox = self.browser.find_element(By.ID, "id_new_item")
         self.assertEqual(inputbox.get_attribute("placeholder"), "Enter a to-do item")
