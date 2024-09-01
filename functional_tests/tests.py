@@ -7,18 +7,21 @@
 # and one of the things it can do is run a development server.
 # python manage.py runserver
 # test passed after this
-import time
+
 # Tests that use Selenium let us drive a real web browser, so they really
 # let us see how the application functions from the user’s point of view.
 # That’s why they’re called functional tests.
 # Functional Test == Acceptance Test == End-to-End Test
 
+import time
 from django.test import LiveServerTestCase
-import unittest
 from selenium import webdriver
 from selenium.webdriver import Keys
 from selenium.webdriver.common.by import By
+from selenium.common.exceptions import WebDriverException
 
+
+MAX_WAIT = 5
 
 class NewVisitorTest(LiveServerTestCase):
     def setUp(self) -> None:
@@ -27,10 +30,21 @@ class NewVisitorTest(LiveServerTestCase):
     def tearDown(self) -> None:
         self.browser.quit()
 
-    def check_for_row_in_todo_list(self, row_text):
-        table = self.browser.find_element(By.ID, "id_list_table")
-        rows = table.find_elements(By.TAG_NAME, "tr")
-        self.assertIn(row_text, [row.text for row in rows])
+    def wait_for_row_in_todo_list(self, row_text):
+        start_time = time.time()
+        while True:
+            try:
+                table = self.browser.find_element(By.ID, "id_list_table")
+                rows = table.find_elements(By.TAG_NAME, "tr")
+                self.assertIn(row_text, [row.text for row in rows])
+                return
+            except (AssertionError, WebDriverException):
+                # WebDriverException for when the page hasn’t loaded and
+                # Selenium can’t find the table element on the page, and AssertionError for when the table is there,
+                # but it’s perhaps a table from before the page reloads, so it doesn’t have our row in yet.
+                if time.time() - start_time > MAX_WAIT:
+                    raise
+                time.sleep(0.5)
 
     def test_can_start_a_todo_list(self):
 
@@ -53,13 +67,12 @@ class NewVisitorTest(LiveServerTestCase):
 
         # When she hits enter, the page updates and shows "1. Knead Dough" on the page
         inputbox.send_keys(Keys.ENTER)
-        time.sleep(1)
 
         # self.assertTrue(any(row.text == "1. Knead Dough" for row in rows),
         #                 "New To-Do item did not appear in the table. "
         #                 f"Contents were \n{table.text}") # generator not list comprehension
 
-        self.check_for_row_in_todo_list("1. Knead Dough")
+        self.wait_for_row_in_todo_list("1. Knead Dough")
 
         # There is still a text-box inviting her to add a new item to the list
         inputbox = self.browser.find_element(By.ID, "id_new_item")
@@ -71,7 +84,8 @@ class NewVisitorTest(LiveServerTestCase):
         time.sleep(1)
 
         # The page updates again and shows both items on the page
-        self.check_for_row_in_todo_list("2. Roll the rotis")
+        self.wait_for_row_in_todo_list("1. Knead Dough")
+        self.wait_for_row_in_todo_list("2. Roll the rotis")
         # Satisfied, she goes back to sleep
 
 
