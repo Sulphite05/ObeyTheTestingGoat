@@ -1,7 +1,7 @@
 # failing test if superlists are not configured
 # django-admin startproject superlists .
 # The superlists folder is intended for stuff that applies to the whole
-# project- like settings.py, for example, which is used to store global
+# project-like settings.py, for example, which is used to store global
 # configuration information for the site.
 # But the main thing to notice is manage.py. That’s Django’s Swiss Army knife,
 # and one of the things it can do is run a development server.
@@ -13,13 +13,14 @@ import time
 # That’s why they’re called functional tests.
 # Functional Test == Acceptance Test == End-to-End Test
 
+from django.test import LiveServerTestCase
 import unittest
 from selenium import webdriver
 from selenium.webdriver import Keys
 from selenium.webdriver.common.by import By
 
 
-class NewVisitorTest(unittest.TestCase):
+class NewVisitorTest(LiveServerTestCase):
     def setUp(self) -> None:
         self.browser = webdriver.Firefox()
 
@@ -35,7 +36,8 @@ class NewVisitorTest(unittest.TestCase):
 
         # Aqiba has heard about a new To Do list App
         # She checks its homepage
-        self.browser.get("http://localhost:8000")
+        # self.browser.get("http://localhost:8000")
+        self.browser.get(self.live_server_url)
 
         # She notices the page title and header mention to do lists
         self.assertIn("To-Do", self.browser.title)
@@ -73,11 +75,11 @@ class NewVisitorTest(unittest.TestCase):
         # Satisfied, she goes back to sleep
 
 
-if __name__ == "__main__":
-    # that’s how a Python script checks if it’s been executed from the command line,
-    # rather than just imported by another script
-
-    unittest.main()     # searches for all tests in main files then runs them
+# if __name__ == "__main__":
+#     # that’s how a Python script checks if it’s been executed from the command line,
+#     # rather than just imported by another script
+#
+#     unittest.main()     # searches for all tests in main files then runs them
 
 # git commit -a to automatically add any changes to tracked files(not any newly added file)
 
