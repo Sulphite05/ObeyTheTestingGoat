@@ -12,6 +12,7 @@
 # let us see how the application functions from the user’s point of view.
 # That’s why they’re called functional tests.
 # Functional Test == Acceptance Test == End-to-End Test
+# established LiveServer connection for test database
 
 import time
 from django.test import LiveServerTestCase
@@ -20,8 +21,8 @@ from selenium.webdriver import Keys
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import WebDriverException
 
-
 MAX_WAIT = 5
+
 
 class NewVisitorTest(LiveServerTestCase):
     def setUp(self) -> None:
@@ -63,7 +64,7 @@ class NewVisitorTest(LiveServerTestCase):
         self.assertEqual(inputbox.get_attribute("placeholder"), "Enter a to-do item")
 
         # She types "Knead Dough" in  a text-box
-        inputbox.send_keys("Knead Dough")   # selenium's way of typing into input elements
+        inputbox.send_keys("Knead Dough")  # selenium's way of typing into input elements
 
         # When she hits enter, the page updates and shows "1. Knead Dough" on the page
         inputbox.send_keys(Keys.ENTER)
@@ -88,6 +89,46 @@ class NewVisitorTest(LiveServerTestCase):
         self.wait_for_row_in_todo_list("2. Roll the rotis")
         # Satisfied, she goes back to sleep
 
+    def test_multiple_users_can_start_lists_at_different_urls(self):
+        # Iqra starts a new to-do list
+        self.browser.get(self.live_server_url)
+        inputbox = self.browser.find_element(By.ID, "id_new_item")
+        inputbox.send_keys("Knead Dough")
+        inputbox.send_keys(Keys.ENTER)
+        self.wait_for_row_in_todo_list("1. Knead Dough")
+
+        # she notices that her list has a unique url
+        iqra_list_url = self.browser.current_url
+        self.assertRegex(iqra_list_url, '/lists/.+')
+
+        ##  We delete all browser cookies(meta comments are written in ##)
+        ##  As a way of simulating a brand new user session
+        self.browser.delete_all_cookies()
+
+        # Aqsa visits the home page. There is no sign of Iqra's list
+        self.browser.get(self.live_server_url)
+        page_text = self.browser.find_element(By.TAG_NAME, "body").text
+        self.assertNotIn("Knead Dough", page_text)
+        self.assertNotIn("Roll the rotis", page_text)
+
+        # Aqsa starts a new list entering a new item. She is a little less interesting than Iqra :')
+        inputbox = self.browser.find_element(By.ID, "id_new_item")
+        inputbox.send_keys("Do homework")
+        inputbox.send_keys(Keys.ENTER)
+        self.wait_for_row_in_todo_list("1. Do homework")
+
+        # Aqsa gets her own unique url
+        aqsa_list_url = self.browser.current_url
+        self.assertRegex(aqsa_list_url, "/lists/.+")
+        self.assertNotEqual(iqra_list_url, aqsa_list_url)
+
+        # Again there is no trace of Iqra's list
+        page_text = self.browser.find_element(By.TAG_NAME, "body").text
+        self.assertNotIn("Knead Dough", page_text)
+        self.assertNotIn("Roll the rotis", page_text)
+
+        # Satisfied, they both go back to sleep
+
 
 # if __name__ == "__main__":
 #     # that’s how a Python script checks if it’s been executed from the command line,
@@ -109,6 +150,3 @@ class NewVisitorTest(LiveServerTestCase):
 
 # Functional tests test the application from the outside, from the user’s point of view(per test per feature)
 # Unit tests test the application from the inside, from the programmer’s point of view(multiple tests per feature)
-
-
-
