@@ -18,8 +18,14 @@ Including another URLconf
 from django.urls import path
 from lists import views
 
+
 urlpatterns = [
-    path("", views.home_page, name="home"),    # strips /
-    path("lists/the-only-list-in-the-world/", views.view_list, name="view-list"),
-    path("lists/new/", views.new_list, name="new-list")
+    path("", views.home_page, name="home"),
+    path("lists/new", views.new_list, name="new_list"),
+    # URLs without a trailing slash are "action" URLs which modify the database.
+    path("lists/<int:list_id>/", views.view_list, name="view_list"),
+    # We adjust the regular expression for our URL to include a capture group, <int:list_id>, which will match any
+    # numerical characters, up to the following /, The captured id will get passed to the view as an argument.
+    path("lists/<int:list_id>/add_item", views.add_item, name="add_item"),
 ]
+
