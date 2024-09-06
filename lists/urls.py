@@ -15,13 +15,16 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
-from django.urls import include, path
-from lists import views as list_views
+from django.urls import path
+from lists import views
 
 
 urlpatterns = [
-    path("", list_views.home_page, name="home"),
-    path("lists/", include("lists.urls")),
-    # URL as a prefix, which will be applied to all the included URLs
+    path("new", views.new_list, name="new_list"),
+    # URLs without a trailing slash are "action" URLs which modify the database.
+    path("<int:list_id>/", views.view_list, name="view_list"),
+    # We adjust the regular expression for our URL to include a capture group, <int:list_id>, which will match any
+    # numerical characters, up to the following /, The captured id will get passed to the view as an argument.
+    path("<int:list_id>/add_item", views.add_item, name="add_item"),
 ]
 #  cp superlists/urls.py lists/
