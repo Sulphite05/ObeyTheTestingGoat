@@ -7,7 +7,7 @@
 # and one of the things it can do is run a development server.
 # python manage.py runserver
 # test passed after this
-
+import os
 # Tests that use Selenium let us drive a real web browser, so they really
 # let us see how the application functions from the user’s point of view.
 # That’s why they’re called functional tests.
@@ -15,7 +15,8 @@
 # established LiveServer connection for test database
 
 import time
-from django.test import LiveServerTestCase
+# from django.test import LiveServerTestCase
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver import Keys
 from selenium.webdriver.common.by import By
@@ -24,7 +25,7 @@ from selenium.common.exceptions import WebDriverException
 MAX_WAIT = 5
 
 
-class NewVisitorTest(LiveServerTestCase):
+class NewVisitorTest(StaticLiveServerTestCase):
     def setUp(self) -> None:
         self.browser = webdriver.Firefox()
 
@@ -33,6 +34,7 @@ class NewVisitorTest(LiveServerTestCase):
 
 
     def test_layout_and_styling(self):
+
 
         # Aqiba goes to the homepage
         self.browser.get(self.live_server_url)
@@ -59,7 +61,6 @@ class NewVisitorTest(LiveServerTestCase):
             512,
             delta=10,
         )
-
 
 
 
