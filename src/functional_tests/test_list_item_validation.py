@@ -1,7 +1,7 @@
 # from unittest import skip
+from selenium.webdriver import Keys
+from selenium.webdriver.common.by import By
 from .base import FunctionalTest
-
-
 
 
 class ItemValidationTest(FunctionalTest):
@@ -9,14 +9,32 @@ class ItemValidationTest(FunctionalTest):
     def test_cannot_add_empty_list_items(self):
         # Aqiba goes to he home page and accidently submits an empty list item
         # She hits enter on the empty input box
+        self.browser.get(self.live_server_url)
+        self.browser.find_element(By.ID, "id_new_item").send_keys(Keys.ENTER)
 
         # The home page refreshes with an error saying the list item cannot be blank
-        # SHe tries again with some text in the input and it works
+        self.wait_for(lambda: self.assertEqual(self.browser.find_element(By.CSS_SELECTOR, ".invalid-feedback").text,
+                                               "You can't have an empty list item")
+                      )
+
+        # She tries again with some text in the input and it works
+        self.browser.find_element(By.ID, "id_new_item").send_keys("Purchase meat")
+        self.browser.find_element(By.ID, "id_new_item").send_keys(Keys.ENTER)
+        self.wait_for_row_in_todo_list("1. Purchase meat")
 
         # Perversely, she tries entering another blank item
+        self.browser.find_element(By.ID, "id_new_item").send_keys(Keys.ENTER)
+
         # She receives a similar warning
+        self.wait_for(lambda: self.assertEqual(self.browser.find_element(By.CSS_SELECTOR, ".invalid-feedback").text,
+                                               "You can't have an empty list item")
+                      )
+
         # And then she corrects it by sending a non-empty list item
-        self.fail("write me!")
+        self.browser.find_element(By.ID, "id_new_item").send_keys("Make tea")
+        self.browser.find_element(By.ID, "id_new_item").send_keys(Keys.ENTER)
+        self.wait_for_row_in_todo_list("1. Purchase meat")
+        self.wait_for_row_in_todo_list("2. Make tea")
 
 
 # if __name__ == "__main__":

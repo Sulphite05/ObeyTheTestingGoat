@@ -1,6 +1,5 @@
 from django.test import TestCase
-from lists.models import Item, List
-
+from .models import Item, List
 
 
 # Create your tests here.

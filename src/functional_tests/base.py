@@ -33,6 +33,19 @@ class FunctionalTest(StaticLiveServerTestCase):
     def tearDown(self) -> None:
         self.browser.quit()
 
+    def wait_for(self, fn):
+        start_time = time.time()
+        while True:
+            try:
+                return fn()
+            except (AssertionError, WebDriverException):
+                # WebDriverException for when the page hasn’t loaded and
+                # Selenium can’t find the table element on the page, and AssertionError for when the table is there,
+                # but it’s perhaps a table from before the page reloads, so it doesn’t have our row in yet.
+                if time.time() - start_time > MAX_WAIT:
+                    raise
+                time.sleep(0.5)
+
     def wait_for_row_in_todo_list(self, row_text):
         start_time = time.time()
         while True:
