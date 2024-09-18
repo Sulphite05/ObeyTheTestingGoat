@@ -1,5 +1,7 @@
 from django.test import TestCase
 from lists.models import Item, List
+from django.core.exceptions import ValidationError # for django's validation error(saving empty list item)
+from django.db.utils import IntegrityError # for databse's integrity error(saving None list item)
 
 
 # Create your tests here.
@@ -31,4 +33,21 @@ class ListAndItemModelTest(TestCase):
         self.assertEqual(first_saved_item.list, my_list)
         self.assertEqual(second_saved_item.text, "Item the second")
         self.assertEqual(second_saved_item.list, my_list)
+
+    def test_cannot_ave_null_list_items(self):
+        my_list = List.objects.create()
+        item = Item(list=my_list, text=None)
+        with self.assertRaises(IntegrityError):
+            item.save()
+        # try:
+        #     item.save()
+        #     self.fail('The save should have raised an exception')
+        # except IntegrityError:
+        #     pass
+
+    def test_cannot_ave_empty_list_items(self):
+        my_list = List.objects.create()
+        item = Item(list=my_list, text="")
+        with self.assertRaises(ValidationError):
+            item.full_clean()   # applies all validation tests(empty=False)
 
