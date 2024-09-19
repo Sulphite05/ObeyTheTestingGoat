@@ -22,7 +22,7 @@ class ItemValidationTest(FunctionalTest):
         self.browser.find_element(By.ID, "id_new_item").send_keys(Keys.ENTER)
         self.wait_for_row_in_todo_list("1. Purchase meat")
 
-        return  # TODO: Remove early return
+        # return  # TODO: Remove early return
 
         # Perversely, she tries entering another blank item
         self.browser.find_element(By.ID, "id_new_item").send_keys(Keys.ENTER)
