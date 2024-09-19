@@ -45,7 +45,7 @@ class ListAndItemModelTest(TestCase):
         # except IntegrityError:
         #     pass
 
-    def test_cannot_ave_empty_list_items(self):
+    def test_cannot_save_empty_list_items(self):
         my_list = List.objects.create()
         item = Item(list=my_list, text="")
         with self.assertRaises(ValidationError):

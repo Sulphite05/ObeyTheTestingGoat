@@ -25,6 +25,6 @@ urlpatterns = [
     path("<int:list_id>/", views.view_list, name="view_list"),
     # We adjust the regular expression for our URL to include a capture group, <int:list_id>, which will match any
     # numerical characters, up to the following /, The captured id will get passed to the view as an argument.
-    path("<int:list_id>/add_item", views.add_item, name="add_item"),
+    # path("<int:list_id>/add_item", views.add_item, name="add_item"),
 ]
 #  cp superlists/urls.py lists/
