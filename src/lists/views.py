@@ -9,17 +9,17 @@ from .forms import ItemForm
 def home_page(request):
     # return HttpResponse("<html><title>To-Do lists</title></html>")
     # if request.method == "POST":
-    # return HttpResponse("You submitted: " + request.POST["item_text"])
+    # return HttpResponse("You submitted: " + request.POST["text"])
 
     # if request.method == "POST":
     #     # item = Item()
-    #     # item.text = request.POST.get("item_text", "")
+    #     # item.text = request.POST.get("text", "")
     #     # item.save()
-    #     Item.objects.create(text=request.POST["item_text"])
+    #     Item.objects.create(text=request.POST["text"])
     #     return redirect("/lists/the-only-list-in-the-world/")
     # return render(request,
     #               "home.html",
-    #               {"new_item_text": request.POST.get("item_text", "")},
+    #               {"new_text": request.POST.get("text", "")},
     #               )
     return render(request, "home.html", {"form": ItemForm()})
 
@@ -31,8 +31,8 @@ def view_list(request, list_id):
 
     if request.method == "POST":
         try:
-            item = Item(text=request.POST["item_text"], list=our_list)
-            # Item.objects.create(text=request.POST["item_text"], list=our_list)
+            item = Item(text=request.POST["text"], list=our_list)
+            # Item.objects.create(text=request.POST["text"], list=our_list)
             item.full_clean()
             item.save()
             return redirect(our_list)
@@ -45,7 +45,7 @@ def view_list(request, list_id):
 
 def new_list(request):
     nulist = List.objects.create()
-    item = Item.objects.create(text=request.POST["item_text"], list=nulist)
+    item = Item.objects.create(text=request.POST["text"], list=nulist)
     try:
         item.full_clean()
         item.save()
@@ -61,6 +61,6 @@ def new_list(request):
 
 # def add_item(request, list_id):
 #     our_list = List.objects.get(id=list_id)
-#     Item.objects.create(text=request.POST["item_text"], list=our_list)
+#     Item.objects.create(text=request.POST["text"], list=our_list)
 #     return redirect(f"/lists/{our_list.id}/")
 

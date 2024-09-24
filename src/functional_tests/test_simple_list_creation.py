@@ -18,7 +18,7 @@ class NewVisitorTest(FunctionalTest):
         self.assertIn("To-Do", header_text)
 
         # She is invited to enter a to-do item straight away
-        inputbox = self.browser.find_element(By.ID, "id_new_item")
+        inputbox = self.get_item_input_box()
         self.assertEqual(inputbox.get_attribute("placeholder"), "Enter a to-do item")
 
         # She types "Knead Dough" in  a text-box
@@ -34,7 +34,7 @@ class NewVisitorTest(FunctionalTest):
         self.wait_for_row_in_todo_list("1. Knead Dough")
 
         # There is still a text-box inviting her to add a new item to the list
-        inputbox = self.browser.find_element(By.ID, "id_new_item")
+        inputbox = self.get_item_input_box()
         self.assertEqual(inputbox.get_attribute("placeholder"), "Enter a to-do item")
 
         # She enters "Roll the rotis" as she is very methodical and presses enter
@@ -50,7 +50,7 @@ class NewVisitorTest(FunctionalTest):
     def test_multiple_users_can_start_lists_at_different_urls(self):
         # Iqra starts a new to-do list
         self.browser.get(self.live_server_url)
-        inputbox = self.browser.find_element(By.ID, "id_new_item")
+        inputbox = self.get_item_input_box()
         inputbox.send_keys("Knead Dough")
         inputbox.send_keys(Keys.ENTER)
         self.wait_for_row_in_todo_list("1. Knead Dough")
@@ -70,7 +70,7 @@ class NewVisitorTest(FunctionalTest):
         self.assertNotIn("Roll the rotis", page_text)
 
         # Aqsa starts a new list entering a new item. She is a little less interesting than Iqra :')
-        inputbox = self.browser.find_element(By.ID, "id_new_item")
+        inputbox = self.get_item_input_box()
         inputbox.send_keys("Do homework")
         inputbox.send_keys(Keys.ENTER)
         self.wait_for_row_in_todo_list("1. Do homework")
