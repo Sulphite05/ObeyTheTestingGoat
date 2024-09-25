@@ -17,9 +17,9 @@ class NewVisitorTest(FunctionalTest):
         header_text = self.browser.find_element(By.TAG_NAME, "h1").text
         self.assertIn("To-Do", header_text)
 
-        # She is invited to enter a to-do item straight away
+        # She is invited to enter a to-do list item straight away
         inputbox = self.get_item_input_box()
-        self.assertEqual(inputbox.get_attribute("placeholder"), "Enter a to-do item")
+        self.assertEqual(inputbox.get_attribute("placeholder"), "Enter a to-do list item")
 
         # She types "Knead Dough" in  a text-box
         inputbox.send_keys("Knead Dough")  # selenium's way of typing into input elements
@@ -35,7 +35,7 @@ class NewVisitorTest(FunctionalTest):
 
         # There is still a text-box inviting her to add a new item to the list
         inputbox = self.get_item_input_box()
-        self.assertEqual(inputbox.get_attribute("placeholder"), "Enter a to-do item")
+        self.assertEqual(inputbox.get_attribute("placeholder"), "Enter a to-do list item")
 
         # She enters "Roll the rotis" as she is very methodical and presses enter
         inputbox.send_keys("Roll the rotis")  # selenium's way of typing into input elements

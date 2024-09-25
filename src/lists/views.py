@@ -23,39 +23,62 @@ def home_page(request):
     #               )
     return render(request, "home.html", {"form": ItemForm()})
 
-
 def view_list(request, list_id):
     our_list = List.objects.get(id=list_id)
-    error = None
-    # items = Item.objects.filter(list=our_list)
-
     if request.method == "POST":
-        try:
-            item = Item(text=request.POST["text"], list=our_list)
-            # Item.objects.create(text=request.POST["text"], list=our_list)
-            item.full_clean()
-            item.save()
+        form = ItemForm(data=request.POST)
+        if form.is_valid():
+            Item.objects.create(text=request.POST["text"], list=our_list)
             return redirect(our_list)
+    else:
+        form = ItemForm()
+    return render(request, "list.html", {"list": our_list, "form": form})
 
-        except ValidationError:
-            error = "You can't have an empty list item"
-
-    return render(request, "list.html", {"list": our_list, "error": error})
+# def view_list(request, list_id):
+#     our_list = List.objects.get(id=list_id)
+#     error = None
+#     # items = Item.objects.filter(list=our_list)
+#
+#     if request.method == "POST":
+#         try:
+#             item = Item(text=request.POST["text"], list=our_list)
+#             # Item.objects.create(text=request.POST["text"], list=our_list)
+#             item.full_clean()
+#             item.save()
+#             return redirect(our_list)
+#
+#         except ValidationError:
+#             error = "You can't have an empty list item"
+#
+#     form = ItemForm()
+    # return render(
+    #     request,
+    #     "list.html",
+    # return render(request, "list.html", {"list": our_list, "error": error})
 
 
 def new_list(request):
-    nulist = List.objects.create()
-    item = Item.objects.create(text=request.POST["text"], list=nulist)
-    try:
-        item.full_clean()
-        item.save()
-    except ValidationError:
-        nulist.delete()
-        error = "You can't have an empty list item"
-        return render(request, "home.html", {"error": error})
-    # return redirect(f"/lists/{nulist.id}/")
-    # return redirect("view_list", nulist.id)
-    return redirect(nulist)
+    form = ItemForm(data=request.POST)
+    if form.is_valid():
+        nulist = List.objects.create()
+        Item.objects.create(text=request.POST["text"], list=nulist)
+        return redirect(nulist)
+    else:
+        return render(request, "home.html", {"form": form})
+
+# def new_list(request):
+#     nulist = List.objects.create()
+#     item = Item.objects.create(text=request.POST["text"], list=nulist)
+#     try:
+#         item.full_clean()
+#         item.save()
+#     except ValidationError:
+#         nulist.delete()
+#         error = "You can't have an empty list item"
+#         return render(request, "home.html", {"error": error})
+#     # return redirect(f"/lists/{nulist.id}/")
+#     # return redirect("view_list", nulist.id)
+#     return redirect(nulist)
 
 
 
