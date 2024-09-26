@@ -1,5 +1,7 @@
 from django.test import TestCase
 from lists.forms import ItemForm
+from lists.models import Item, List
+
 
 class Item_Form_Test(TestCase):
     def test_form_renders_item_text_input(self):
@@ -11,4 +13,12 @@ class Item_Form_Test(TestCase):
         form = ItemForm(data={"text":""})
         self.assertFalse(form.is_valid())
         self.assertEqual(form.errors["text"], ["You can't have an empty list item"])
-        # form.save()
+
+    def test_form_save_handles_saving_to_a_list(self):
+        my_list = List.objects.create()
+        form = ItemForm(data={"text": "do me"})
+        new_item = form.save(for_list=my_list)
+        self.assertEqual(new_item, Item.objects.get())
+        self.assertEqual(new_item.text, "do me")
+        self.assertEqual(new_item.list, my_list)
+
