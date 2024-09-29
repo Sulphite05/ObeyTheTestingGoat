@@ -5,36 +5,49 @@ from django.db.utils import IntegrityError # for databse's integrity error(savin
 
 
 # Create your tests here.
-class ListAndItemModelTest(TestCase):
-    def test_saving_and_retrieving_items(self):
-        my_list = List()
-        my_list.save()
+class ItemModelTest(TestCase):
+    def test_default_text(self):
+        item = Item()
+        self.assertEqual(item.text, "")
 
-        first_item = Item()
-        first_item.text = "The first (ever) list item"
-        first_item.list = my_list
-        first_item.save()
 
-        second_item = Item()
-        second_item.text = "Item the second"
-        second_item.list = my_list
-        second_item.save()
+class ListModelTest(TestCase):
+    def test_item_is_related_to_list(self):
+        my_list = List.objects.create()
+        item = Item()
+        item.list = my_list
+        item.save()
+        self.assertIn(item, my_list.item_set.all())
 
-        saved_list = List.objects.get()
-        self.assertEqual(saved_list, my_list)
+    # def test_saving_and_retrieving_items(self):
+    #     my_list = List()
+    #     my_list.save()
+    #
+    #     first_item = Item()
+    #     first_item.text = "The first (ever) list item"
+    #     first_item.list = my_list
+    #     first_item.save()
+    #
+    #     second_item = Item()
+    #     second_item.text = "Item the second"
+    #     second_item.list = my_list
+    #     second_item.save()
+    #
+    #     saved_list = List.objects.get()
+    #     self.assertEqual(saved_list, my_list)
+    #
+    #     saved_items = Item.objects.all()    # returns QuerySet which is a list-like object
+    #     self.assertEqual(saved_items.count(), 2)
+    #
+    #     first_saved_item = saved_items[0]
+    #     second_saved_item = saved_items[1]
+    #
+    #     self.assertEqual(first_saved_item.text, "The first (ever) list item")
+    #     self.assertEqual(first_saved_item.list, my_list)
+    #     self.assertEqual(second_saved_item.text, "Item the second")
+    #     self.assertEqual(second_saved_item.list, my_list)
 
-        saved_items = Item.objects.all()    # returns QuerySet which is a list-like object
-        self.assertEqual(saved_items.count(), 2)
-
-        first_saved_item = saved_items[0]
-        second_saved_item = saved_items[1]
-
-        self.assertEqual(first_saved_item.text, "The first (ever) list item")
-        self.assertEqual(first_saved_item.list, my_list)
-        self.assertEqual(second_saved_item.text, "Item the second")
-        self.assertEqual(second_saved_item.list, my_list)
-
-    def test_cannot_ave_null_list_items(self):
+    def test_cannot_save_null_list_items(self):
         my_list = List.objects.create()
         item = Item(list=my_list, text=None)
         with self.assertRaises(IntegrityError):
